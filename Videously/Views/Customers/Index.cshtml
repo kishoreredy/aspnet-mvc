@@ -1,0 +1,162 @@
+﻿@model IEnumerable<Videously.Models.Customer>
+@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Customers</h2>
+<p>
+    @Html.ActionLink("New Customer", "AddCustomer", "Customers", null, new { @class = "btn btn-primary" })
+</p>
+@*@if (Model.Any())
+{
+    <table id="customers" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Membership Type</th>
+                <th>Discount Rate</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(customer.Name, "EditCustomer", "Customers", new { id = customer.Id }, null)</td>
+                        <td>@customer.MembershipType.Name</td>
+                        <td>@customer.MembershipType.DiscountRate %</td>
+                        <td>
+                            <button data-customer-id="@customer.Id" class="btn-link js-delete">Delete</button>
+                        </td>
+                    </tr>
+                }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No customers found</p>
+}*@
+
+<table id="customers" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Membership Type</th>
+            <th>Discount Rate</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+</table>
+
+@section scripts
+{
+    @*<script>
+        $(document).ready(function () {
+           //$("#customers").DataTable();    --> this is used when html tags are defined
+
+            // Datatable is loaded with WebAPI call directly so foreach block above HTML tags can be removed
+            $("#customers").DataTable({
+                ajax: {
+                    url: 'api/customers',
+                    type: 'GET',
+                    datatype: 'json'
+                },
+                columns: [
+                    {
+                        data: "name",
+                        //render: function (data, type, customer) {
+                        //    return "<a href='/customers/editcustomer/" + customer.id + "'>" + data + "</a>";
+                        //}
+                    },
+                    {
+                        data: "membershipType.name"
+                    },
+                    {
+                        data: "membershipType.DiscountRate"
+                    },
+                    {
+                        data: "id",
+                        //render: function (data) {
+                        //    return "<button class='btn-link js-delete' data-customer-id=" + data + ">Delete</button>";
+                        //}
+                    }
+                ]
+            });
+
+
+            //$("#customers .js-delete").on("click", function () {   --> Delete call transfered to click instead of having it for all table rows
+            $("#customers").on("click", ".js-delete", function () {
+                var button = $(this);
+                bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                    console.log(result);
+                    if (result) {
+                        $.ajax({
+                            url: "/api/customers/" + button.attr("data-customer-id"),
+                            method: "DELETE",
+                            success: function () {
+                                button.parents("tr").remove();
+                            }
+                        });
+                    }
+                });
+
+                //if (confirm("Are you sure want to delete this customer?")) {
+                //    $.ajax({
+                //        url: "/api/customers/" + button.attr("data-customer-id"),
+                //        method: "DELETE",
+                //        success: function () {
+                //            console.log("Success");
+                //            button.parents("tr").remove();
+                //        }
+                //    });
+                //}
+            });
+        });
+    </script>*@
+
+    <script>
+        $(document).ready(function () {
+            var table = $("#customers").DataTable({
+                ajax: {
+                    url: "/api/customers",
+                    datasrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, customer) {
+                            return "<a href='/customers/editcustomer/" + customer.id + "'>" + customer.name + "</a>";
+                        }
+                    },
+                    { data: "membershipType.name" },
+                    { data: "membershipType.discountRate" },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn-link js-delete' data-customer-id=" + data + ">Delete</button>";
+                        }
+                    }
+                ]
+            });
+
+            $("#customers").on("click", ".js-delete", function () {
+                var button = $(this);
+                bootbox.confirm("Are you sure want to delete this customer?", function (result) {
+                    console.log(result);
+                    if (result) {
+                        $.ajax({
+                            url: "/api/customers/" + button.attr("data-customer-id"),
+                            method: "DELETE",
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
+

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Videously.Models.Movie>
+@{
+    ViewBag.Title = "Movies";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Movies</h2>
+<p>@Html.ActionLink("New Movie", "AddMovie", "Movies", null, new { @class = "btn btn-primary" })</p>
+@if (Model.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Genre</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.ActionLink(item.Title, "Details", "Movies", new {Id = item.Id}, null)</td>
+                    <td>@item.Genre.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No movies found</p>
+}

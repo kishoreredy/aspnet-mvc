@@ -1,0 +1,16 @@
+﻿@model Videously.Models.Movie
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Title</h2>
+<ul style=“list-style-type:square”>
+    <li>Genre: @Model.Genre.Name</li>
+    <li>Release Date: @(Model.ReleaseDate.ToString("dddd, MMMM dd, yyyy"))</li>
+    <li>Date Added: @(Model.DateAdded.ToLongDateString())</li>
+    <li>Number in Stock: @Model.NumberInStock</li>
+</ul>
+<div>
+    <p>@Html.ActionLink("Edit", "EditMovie", "Movies", new {Id = Model.Id}, new { @class = "btn btn-secondary" })</p>
+</div>
